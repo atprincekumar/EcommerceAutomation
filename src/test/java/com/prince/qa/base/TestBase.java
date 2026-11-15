@@ -31,8 +31,14 @@ public class TestBase {
     @BeforeMethod
     public void setUp() {
         ChromeOptions options = new ChromeOptions();
-        if (Boolean.parseBoolean(System.getenv().getOrDefault("HEADLESS", "false"))) {
+        boolean isHeadless = Boolean.parseBoolean(System.getenv().getOrDefault("HEADLESS", "false"))
+                || Boolean.parseBoolean(System.getProperty("headless", "false"));
+
+        if (isHeadless) {
             options.addArguments("--headless=new");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
         }
         options.addArguments("--start-maximized");
         options.addArguments("--window-size=1920,1080");

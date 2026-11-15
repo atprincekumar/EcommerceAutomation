@@ -1,0 +1,48 @@
+name: Ecommerce Automation CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run UI Test Suite (Headless Chrome)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Verify Google Chrome installation
+        run: google-chrome --version
+
+      - name: Run Maven Test Suite
+        env:
+          HEADLESS: "true"
+        run: mvn clean test -B
+
+      - name: Upload TestNG & Surefire Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-test-reports
+          path: target/surefire-reports/
+          retention-days: 14
+
+      - name: Upload Failure Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots
+          path: target/failure-screenshots/
+          retention-days: 14
