@@ -30,15 +30,10 @@ public class CheckoutPage {
     }
 
     private void type(By locator, String value) {
-        WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
-        el.click();
+        WebElement el = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         el.clear();
         if (value != null && !value.isEmpty()) {
             el.sendKeys(value);
-            if (!value.equals(el.getAttribute("value"))) {
-                el.clear();
-                el.sendKeys(value);
-            }
         }
     }
 
